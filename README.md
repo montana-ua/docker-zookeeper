@@ -36,7 +36,7 @@ docker build -t zookeeper:3.4.9 .
 
 ### Create a container
 ####Quick start as a standalone server
-You can create an image for QA or development where a zookeeper database will store data as long as a container is running.
+You can create an image for QA or DEV purposes where a zookeeper database will store data as long as a container is running.
 ```
 docker run -d --network host --name <YOUR_CONTAINER_NAME> intropro/zookeeper:3.4.9
 ```
@@ -51,30 +51,30 @@ docker run -d --network host --name zookeeper intropro/zookeeper:3.4.9
 docker run -d -e JVMFLAGS="-XmsYOUR_HEAP_SIZE -XmxYOUR_HEAP_SIZE" --network host --name <YOUR_CONTAINER_NAME> intropro/zookeeper:3.4.9
 ```
 
-*Example how to launch a zookeeper conrainer with heap size 2GB*
+*Example how to launch a zookeeper container with heap size 2GB*
 ```
 docker run -d -e JVMFLAGS="-Xms2G -Xmx2G" --network host --name zookeeper intropro/zookeeper:3.4.9
 ```
 
 ####Start with  JMX Port
-If you need to collect zookeeper statistics via JMX, then you can run a zookeeper container with JMXPORT option.
+If you need to collect the zookeeper statistics via JMX, then you can run a zookeeper container with JMXPORT option.
 ```
 docker run -d -e JMXPORT=YOUR_JMX_PORT --network host --name <YOUR_CONTAINER_NAME> intropro/zookeeper:3.4.9
 ```
 Please note that you can give the "java.net.UnknownHostException" error if your host haven't PTR record. To avoid this exception I strongly recommned to run a container on a host with PTR record (PTR record resolves the IP address to a domain/hostname). If it's imposible you can apply the workaround and add "IPDDARESS HOSTNAME" record into your /etc/hosts file.
 
-*Example how to add "IPDDARESS HOSTNAME" record into your /etc/hosts file (permorm the command below with root privilages)*
+*Example how to add "IPDDARESS HOSTNAME" record into your /etc/hosts file (perform the command below with root privilages)*
 ```
 echo "$(ip route get 8.8.8.8 | head -1 | sed 's/.*src //g') $(hostname)" >> /etc/hosts
 ```
 
-*Example how to launch a zookeeper conrainer with JMX port*
+*Example how to launch a zookeeper container with JMX port*
 ```
 docker run -d -e JMXPORT=9999 --network host --name zookeeper intropro/zookeeper:3.4.9
 ```
 
 ####Use an own configuration file
-You must pull a zookeeper config template from the GitHub, create configuration folder and unpack the configuration files into created folder, before run a zookeeper container with an own configuration file.
+You must pull a zookeeper config template from the GitHub, create a configuration folder and unpack the configuration files into created folder, before run a zookeeper container with an own configuration file.
 ```
 cd /tmp
 git clone https://github.com/intropro/zookeeper-docker.git
@@ -86,7 +86,7 @@ mv log4j.properties /opt/zookeeper/conf
 mv zoo-template.cfg /opt/zookeeper/conf/zoo.cfg
 ```
 
-Set the port where zookeeper will accept client connections.
+Set the port number where zookeeper will accept client connections.
 ```
 sed -i -e 's/{\ZK_PORT}/YOUR_PORT_NUMBER/g' /opt/zookeeper/conf/zoo.cfg
 ```
@@ -95,8 +95,8 @@ sed -i -e 's/{\ZK_PORT}/YOUR_PORT_NUMBER/g' /opt/zookeeper/conf/zoo.cfg
 sed -i -e 's/{\ZK_PORT}/2181/g' /opt/zookeeper/conf/zoo.cfg
 ```
 
-If you want to launch zookeeper in the cluster mode, then you describe members in the configuration file and create myid file.
-Add member into a config file.
+If you want to launch zookeeper in the cluster mode, then you must describe members in the configuration file and create myid file.
+*Add member into a config file.*
 ```
 echo "server.MEMBER_ID=MEMBER_IP_OR_FQDN:MEMBER_FOLLOWER_PORT:MEMBER_LEDEAR_ELECTION_PORT" >> zoo.cfg
 ```
@@ -130,7 +130,7 @@ You can use external volumes to store the log and data files. You must create a 
 mkdir -p /opt/zookeeper/data
 mkdir -p /opt/zookeeper/logs
 ```
-The user who runs a docker container must have read/write privilages on created folders.
+The user who runs a docker container must have read/write privileges on the created folders.
 
 Run a docker container:
 ```
@@ -142,12 +142,13 @@ docker run -d -v /opt/zookeeper/data:/opt/zookeeper/data -v /opt/zookeeper/logs:
 ```
 
 
-####Start a zookeeper ensemble with an own configuration file and expernal log and data volumes
+####Start a zookeeper ensemble with an own configuration file and external log and data volumes
 
 Example of zookeeper ensemble
 ![zk-ensemble](/img/zk-ensemble.png)
 
 How to run an ensemble as on the picture above with ZK client port 2181, ZK follower port 2888, ZK loeader election port 3888, Java heap size 2GB, JMX port 9999 and external logs, conf and data volumes.
+
 Create a zookeeper home folder on the each host:
 ```
 mkdir -p /opt/zookeeper/data
@@ -168,6 +169,7 @@ cd /tmp
 rm -rf /tmp/zookeeper-docker
 ```
 Define zookeeper client port and members list:
+```
 cd /opt/zookeeper/conf
 sed -i -e 's/{\ZK_PORT}/2181/g' zoo.cfg
 echo "server.1=100.64.8.11:2888:3888" >> zoo.cfg
