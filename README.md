@@ -178,6 +178,7 @@ echo "server.3=100.64.8.13:2888:3888" >> zoo.cfg
 ```
 
 Create myid file on the each host:
+
 *Host #1*
 ```
 echo "1" > /opt/zookeeper/data/myid
