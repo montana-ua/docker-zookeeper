@@ -1,0 +1,14 @@
+version: '2'
+services:
+    zookeeper:
+        image: intropro/zookeeper:3.4.9
+        container_name: zookeeper
+        environment:
+            JVMFLAGS: "-Xms2G -Xmx2G"
+            JMXPORT:  9999
+        volumes:
+            - /opt/zookeeper/conf:/opt/zookeeper/conf
+            - /opt/zookeeper/data:/opt/zookeeper/data
+            - /opt/zookeeper/logs:/opt/zookeeper/logs    
+        network_mode: "host"
+            
