@@ -22,8 +22,8 @@ If you need to build your own image based on the Dockerfile from [github](https:
 ```
 cd /tmp
 git clone https://github.com/intropro/zookeeper-docker.git
-git checkout 3.4.9
 cd zookeeper-docker/
+git checkout 3.4.9
 docker build -t <NAME:TAG> .
 cd /tmp
 rm -rf /tmp/zookeeper-docker
@@ -159,6 +159,7 @@ Get a config template files from GitHub:
 ```
 cd /tmp
 git clone https://github.com/intropro/zookeeper-docker.git
+cd zookeeper-docker/
 git checkout 3.4.9
 unzip conf-template.zip
 rm -rf conf-template.zip
