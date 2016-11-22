@@ -1,16 +1,14 @@
 FROM oraclelinux:6.8
 
-MAINTAINER IntroPro AMPADM team <ampadm@intropro.com>
+MAINTAINER Sergey Vergun <sverhun@intropro.com>
 
-ENV HOSTNAME=zookeeper \
-  JAVA_MAJOR=8 \
+ENV JAVA_MAJOR=8 \
   JAVA_UPDATE=102 \
   JAVA_BUILD=14 \
   ZOO_VERSION=3.4.9 \
   ZOO_HOME="/opt/zookeeper" \
   ZOO_LOG_DIR="/opt/zookeeper/logs" \
-  ZOO_LOG4J_PROP='INFO,CONSOLE,ROLLINGFILE' \
-  ZOO_CLIENT_PORT=2181 \
+  ZOO_CONFIG="zoo.cfg" \
   TERM=xterm
 
 RUN mkdir -p /usr/share/info/dir && \
@@ -29,23 +27,18 @@ RUN mkdir -p /usr/share/info/dir && \
   mv build/lib . && \
   mv build/zookeeper*.jar . && \
   rm -rf .git/ .revision/ docs/ src/ .git* *.txt *.xml build/ bin/*.txt bin/*.cmd lib/*.txt /lib/cobertura && \
-  mv conf/zoo_sample.cfg conf/zoo.cfg && \
-  sed -i -e "s/^clientPort=.*/clientPort=$ZOO_CLIENT_PORT/g" conf/zoo.cfg && \
-  sed -i -e 's/^#.*//g' conf/zoo.cfg && \
-  sed -i -e '/^\s*$/d' conf/zoo.cfg && \
-  sed -i -e "s|^dataDir=.*|dataDir=${ZOO_HOME}/data|g" conf/zoo.cfg && \
-  echo "dataLogDir=${ZOO_HOME}/data" >> conf/zoo.cfg && \
-  echo "autopurge.snapRetainCount=30" >> conf/zoo.cfg && \
   sed -i -e 's/MaxFileSize=.*/MaxFileSize=20MB/g' conf/log4j.properties && \
   sed -i -e 's/MaxBackupIndex=.*/MaxBackupIndex=20/g' conf/log4j.properties && \
   sed -i -e 's|#\(.*MaxBackupIndex.*\)|\1|' conf/log4j.properties && \
-  mkdir -p ${ZOO_HOME}/data ${ZOO_HOME}/logs && \
+  mkdir -p ${ZOO_HOME} && \
   cd .. && \
   mv zookeeper/* ${ZOO_HOME}/ && \
   rm -rf /tmp/zookeeper && \
   yum clean all
     
-WORKDIR /opt/zookeeper
+WORKDIR $ZOO_HOME
+
+COPY docker-entrypoint.sh $ZOO_HOME
   
-ENTRYPOINT ["/opt/zookeeper/bin/zkServer.sh"]
-CMD ["start-foreground"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["bin/zkServer.sh", "start-foreground"]
